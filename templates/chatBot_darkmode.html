@@ -1,0 +1,140 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    </meta>
+    <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0" />
+    <!-- <meta name="viewport" content="width=device-width,height=device-height, user-scalable=no" /> -->
+    </meta>
+    <link rel="shortcut icon" href="#"/>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'lib/css/image-zoom.css' %}" />
+    <link rel="stylesheet" href="{% static 'lib/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'lib/css/playfairDisplay.css' %}">
+    <link rel="stylesheet" href="{% static 'lib/css/montserrat.css' %}">
+    <link rel="stylesheet" href="{% static 'lib/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/chatBot_darkmode.css' %}" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.7/vue.min.js"></script>
+    <script type="text/javascript" src="{% static 'lib/js/jquery-3.4.1.slim.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'lib/js/jquery-2.2.4.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'lib/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'lib/js/popper.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/chatBot.js' %}"></script>
+
+    <title>iWill Care</title>
+
+    <script>
+        function myFunction() {
+            var popup = document.getElementById("myPopup");
+            if (popup){
+                popup.classList.toggle("show");
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="Container-fluid">
+        <div id="session_id" style="display: none;">{{session_id}}</div>
+        <div id="user_id" style="display: None;">{{user_id}}</div>
+        <div class="bot_profile" style="background-color: #3b2a50; position: fixed; width: 100%; height: 60px; padding: 7px;">
+            <button type="button" class="btn btn-primary setting_btn" data-toggle="modal" data-target="#exampleModal" onclick="myFunction()">
+                <div class="settings"><div class="setting1"><img src="{% static 'images/sett.jpg' %}"style="height: 20px; width: 19.45px; float: left;"></div></div>
+            </button>
+            <img src="{% static 'images/black_icon.jpg' %}" class="bot_p_img" id= "logo" style="height: 30px; width: 66.92px;">
+            <div class="bag"><div class="bag1"><img src="{% static 'images/black_bag.jpg' %}" style="height: 19px; width: 20px; float: right;"></div></div>
+        </div>
+        <div class="chatUi">
+            <div class="messaging" id="chatBotMessageSection">
+                <div class="inbox_msg">
+                    <div class="mesgs">
+                        <div class="msg_history">
+                            <div class="incoming_msg">
+                                <div class="chat-output received_msg" id="chat-output">
+                                    <!-- <div class="container_chart4"></div> -->
+                                </div>
+                                <div id="wave" style="display: none;">
+                                    <span class="dot"></span>
+                                    <span class="dot"></span>
+                                    <span class="dot"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="myModal1" class="modal1">
+            <img class="modal1-content" id="img01">
+            <div id="caption"></div>
+        </div>
+        <div class="type_msg-responsecards">
+            <div class="input_msg_write-new">
+                <div class="quickReplies" id="responseCard">
+                    <div id="quickReplies"></div>
+                </div>
+            </div>
+        </div>
+        <div class="type_msg" id="input-user" style="display: none;">
+            <div class="input_msg_write">
+                <div id="user-input" contenteditable="true" class="edit user-input write_msg form-submit-class" data-text="Type here..."></div>
+                <button id="submitInputButton" class="msg_send_btn" onclick="submitInput1();" disabled>
+                    <i class="fa fa-send-o sendTelegram" style="color: #fff;"></i>
+                </button>
+            </div>
+        </div>
+        <div class="ModalPopUp">
+            <div class="modal hide" id="myModal" data-keyboard="false" data-backdrop="static">
+                <div class="modal-dialog-centered">
+                    <div class="modal-content2 modalNewBody" onclick="clickOnModalSection(event)">
+                        <div class="modal-body ">
+                            <div class="popUpContent">
+                                <!-- <h5>Get Started ?</h5> -->
+                                <div class="startButton">
+                                    <button>Get Started</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Settings</h5>
+              <br/>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                Light mode
+                <label class="toggle-label toggler" id="toggle">
+                    <input id="rdb1" type="checkbox" name="toggler" checked="true" />
+                    <span class="back">
+                        <span class="toggle"></span>
+                    </span>
+                </label>
+            </div>
+          </div>
+        </div>
+    </div>
+    <script>
+        $("[name=toggler]").click(function() {
+            var url = "{% url 'chatBot_darkmode' %}?uId={{user_id}}";
+            var url1 = "{% url 'chatBot_lightmode' %}?uId={{user_id}}";
+        var toShow = $(this).is(":checked") ? window.location.href = url : window.location.href = url1;
+        $("#" + toShow).toggle(1);
+        });
+    </script>
+    <script src="{% static 'js/uuid.min.js' %}"></script>
+</body>
+
+</html>
