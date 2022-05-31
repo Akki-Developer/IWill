@@ -26,15 +26,16 @@
     <script type="text/javascript" src="{% static 'js/chatBot.js' %}"></script>
 
     <title>iWill Care</title>
-    
     <script>
-        function myFunction() {
+        myFunction = function () {
             var popup = document.getElementById("myPopup");
+            statusButton()
             if (popup){
                 popup.classList.toggle("show");
             }
         }
     </script>
+    
 </head>
 
 <body>
@@ -42,7 +43,7 @@
         <div id="session_id" style="display: none;">{{session_id}}</div>
         <div id="user_id" style="display: None;">{{user_id}}</div>
         <div class="bot_profile" style="background-color: #FFFFFF;position: fixed; width: 100%; height: 60px; padding: 7px; border-bottom-width:2px; border-bottom-color:#F1F3F9; border-bottom-style: solid;">
-            <button type="button" class="btn btn-primary setting_btn" data-toggle="modal" data-target="#exampleModal" onclick="myFunction()">
+            <button type="button" class="btn btn-primary setting_btn" data-toggle="modal" data-target="#exampleModal" onclick="myFunction();">
                 <div class="settings"><div class="setting1"><img src="{% static 'images/settings.jpg' %}"style="height: 20px; width: 19.45px; float: left;"></div></div>
             </button>
             <img src="{% static 'images/logo.jpg' %}" class="bot_p_img" id= "logo" style="height: 30px; width: 66.92px;">

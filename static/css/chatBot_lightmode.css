@@ -442,7 +442,7 @@ div.edit {
 
 .incoming_msg {
   margin: 0;
-  height: 703px;
+  height: 90vh;
   /* margin: 1px 23px 0px 23px; */
   overflow-y: scroll;
   padding-bottom: 36px;

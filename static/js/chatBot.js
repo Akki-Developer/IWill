@@ -25,6 +25,36 @@ $(document).ready(function() {
         setInput("Hello","Hello");
     }
 
+    // myFunction = function () {
+    //     var popup = document.getElementById("myPopup");
+    //     statusButton()
+    //     if (popup){
+    //         popup.classList.toggle("show");
+    //     }
+    // }
+
+    statusButton = function () {
+        var request_chat_history = JSON.stringify({
+            "session_id": session, //add the user ID here
+            "user_id": user_id
+        });
+        jQuery.ajax({
+        url: 'http://127.0.0.1:8000/api/check_status',
+        type: "POST",
+        data: request_chat_history,
+        dataType: "json",
+        contentType: "application/json;charset=utf-8",
+        // beforeSend: function (x) {
+        //     query_flag = false;
+        //     $("#quickReplies").html("");
+        // },
+        success: function (result) {
+            console.log(result);
+            // alert(result)
+        }
+    });
+    };
+
     $("#user-input").keydown(function (e) {
         if (e.keyCode == 13 || e.which == 13) {
             e.preventDefault();
@@ -163,7 +193,7 @@ $(document).ready(function() {
                 if (str_pos > -1) {
                     increament++;
                     increament_list.push(increament);
-                    msg.push( '<div id="app" class= "container_chart4"><p class="botResult" ><img id="myImg'+increament+'" width="300" height="200" src="{% static ' + result[i].image + '/"></p><div class="clearfix"></div></div></br>');
+                    msg.push( '<div id="app" class= "container_chart4"><p class="botResult" ><img id="myImg'+increament+'" width="300" height="200" src="' + result[i].image + '/"></p><div class="clearfix"></div></div></br>');
                 } else {
                     if (i == result.length-1 && button_var == "") { 
                         query_flag = true;
@@ -353,12 +383,12 @@ $(document).ready(function() {
         if(buttons){
             $("#quickReplies").html(buttons);
             divElement = document.querySelector("#quickReplies");
-            elemHeight = divElement.offsetHeight+50;
+            elemHeight = divElement.offsetHeight;
             console.log(elemHeight, divElement.offsetHeight)
             const style = document.createElement('style');
             style.innerHTML = `
                 .incoming_msg {
-                    height: calc(703px - `+elemHeight+`px);
+                    height: calc(90vh - `+elemHeight+`px);
                 }
             `;
             document.head.appendChild(style);
@@ -375,12 +405,12 @@ $(document).ready(function() {
             }); 
 
             divElement = document.querySelector("#quickReplies");
-            elemHeight = divElement.offsetHeight+50;
+            elemHeight = divElement.offsetHeight;
             console.log(elemHeight, divElement.offsetHeight)
             const style = document.createElement('style');
             style.innerHTML = `
                 .incoming_msg {
-                    height: calc(703px - `+elemHeight+`px);
+                    height: calc(90vh - `+elemHeight+`px);
                 }
             `;
             document.head.appendChild(style);
