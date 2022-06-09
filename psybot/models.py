@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
+from django_mysql.models import ListCharField
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -105,10 +106,10 @@ class Bot_conversation(models.Model):
     bot_session_id = models.CharField(max_length=500, default = '')
     user_id = models.IntegerField(null=True)
     category_id = models.IntegerField(null=True)
-    input_text = models.CharField(max_length=500, default = '')
+    input_text = models.TextField(default = '')
     response_text = models.CharField(max_length=500, default = '') 
     created_at = models.DateField(auto_now_add=True)
-
+    next_response = models.ListCharField(blank = True)
 
   
 # class Country_region(models.Model):

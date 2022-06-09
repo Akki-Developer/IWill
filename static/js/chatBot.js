@@ -9,11 +9,21 @@ $(document).ready(function() {
     var reset_button = false;
     var restart = false;
     var restart_count = 0;
+    var next_response;
 
-    fun = function() {  
+    reset_fun = function() {  
         chat_history_flag = false;
         clickOnModalSection();
-        // location.reload();  
+    } 
+    continue_fun = function() {  
+        console.log("next_response")
+        document.getElementById("quickReplies").innerHTML = "";
+        // var someVarName = JSON.parse(localStorage.getItem('quick_rplies'));
+        console.log(next_response.split('[')[1])
+        // attr = JSON.parse(next_response)
+        console.log(next_response)
+        // console.log(typeof(attr))
+        // setQuickResponse(next_response);
     } 
     
     clickOnModalSection = function () {
@@ -24,14 +34,6 @@ $(document).ready(function() {
         
         setInput("Hello","Hello");
     }
-
-    // myFunction = function () {
-    //     var popup = document.getElementById("myPopup");
-    //     statusButton()
-    //     if (popup){
-    //         popup.classList.toggle("show");
-    //     }
-    // }
 
     statusButton = function () {
         var request_chat_history = JSON.stringify({
@@ -49,7 +51,6 @@ $(document).ready(function() {
         //     $("#quickReplies").html("");
         // },
         success: function (result) {
-            console.log(result);
             // alert(result)
         }
     });
@@ -71,11 +72,11 @@ $(document).ready(function() {
         }
         
         if ((e.keyCode == 13 || e.which == 13) && $("#user-input").text() != null) {
-            submitInput1();
+            bot_api_submitInput();
         }
     });
     
-    submitInput = function (value) {
+    chat_history_submitInput = function (value) {
         $("#input-user").hide()
         query_flag = false
         var request_chat_history = JSON.stringify({
@@ -89,7 +90,7 @@ $(document).ready(function() {
             dataType: "json",
             contentType: "application/json;charset=utf-8",
             beforeSend: function (x) {
-                $("#wave").show()
+                // $("#wave").show()
                 $(".incoming_msg").scrollTop($(".incoming_msg").prop('scrollHeight'));
                 $("#input-user").hide();
                 query_flag = false;
@@ -101,7 +102,7 @@ $(document).ready(function() {
                 query_flag = false;
                 if (result.length == 0){
                     chat_history_flag = false;
-                    submitInput1(value);
+                    bot_api_submitInput(value);
                 }else{
                     chat_history_flag = true;
                     integrateResponse(result);
@@ -110,13 +111,12 @@ $(document).ready(function() {
         });
     };
 
-    submitInput1 = function (value) {
+    bot_api_submitInput = function (value) {
         if (restart_count == 0){
             restart = true;
         }else{
             restart = false;
         }
-        console.log("submit1")
         chat_history_flag = false;
         var message = $("#user-input").text().trim();
         if(value){
@@ -124,9 +124,6 @@ $(document).ready(function() {
         }else if(message !== '' || message !== null || message !== 'null' && query_flag==true) {
             value = message.replace(/\\n/g, "\\n")
         }
-        console.log("submit1",value)
-        console.log("submit1",message)
-        
         //Remove previous padding from bot reply
         $("#input-user").hide()
         query_flag = false
@@ -141,7 +138,6 @@ $(document).ready(function() {
             "user_id": user_id
         });
         restart_count = restart_count+1;
-        console.log("restart_count",restart_count)
         jQuery.ajax({
             url: 'http://127.0.0.1:8000/api/bot_api',
             type: "POST",
@@ -167,12 +163,11 @@ $(document).ready(function() {
     
     setInput = function(text,value) {
         text = text.replace(/\_/g, "\'")
-        console.log(text)
         $("#user-input").text(text);
         if (chat_history_flag){
-            submitInput(value);
+            chat_history_submitInput(value);
         }else{
-            submitInput1(value);
+            bot_api_submitInput(value);
         }
         $("#input-user").hide();
         query_flag = false;
@@ -232,11 +227,17 @@ $(document).ready(function() {
             }else if (result[i]["input_text"]){
                 msg.push('<div class="outgoing_msg"><div class="sent_msg"><p>' + result[i]["input_text"] + '</p></div></div>');
             }
+            if (result[i]["next_response"] && i == result.length-1) {
+                next_response = result[i]["next_response"]
+                console.log(next_response)
+                
+            }
             if (result[i]["response_text"] && i == result.length-1) {
                 reset_button =  true;
                 query_flag = true;
                 msg.push('<p class="botResult">' + result[i].response_text + '</p></br>');
-                $("#quickReplies").html('<button class="replies" id="' + "Restart" + '" onClick="fun()"><p>' + "Restart" + '</p></button></br>');
+                $("#quickReplies").html('<button class="replies" id="' + "Restart" + '" onClick="reset_fun()"><p>' + "Restart" + '</p></button>\
+                <button class="replies" id="' + "Continue" + '" onClick="continue_fun()"><p>' + "Continue" + '</p></button></br>');
             }else if (result[i]["response_text"]){
                 msg.push('<p class="botResult">' + result[i].response_text + '</p></br>');
             }
@@ -270,6 +271,7 @@ $(document).ready(function() {
                         }   
                     }
                     if(buttons && k==textReplies.length){
+
                         setQuickResponse(buttons);  
                     }else if (k==textReplies.length && reset_button == false){
                         $("#input-user").show();
@@ -330,6 +332,7 @@ $(document).ready(function() {
     }
 
     setQuickResponse = function (quickReplies) {
+        console.log(typeof(quickReplies))
         $("#input-user").hide();
         query_flag = false;
         var buttons = "";
@@ -384,7 +387,6 @@ $(document).ready(function() {
             $("#quickReplies").html(buttons);
             divElement = document.querySelector("#quickReplies");
             elemHeight = divElement.offsetHeight;
-            console.log(elemHeight, divElement.offsetHeight)
             const style = document.createElement('style');
             style.innerHTML = `
                 .incoming_msg {
@@ -406,7 +408,6 @@ $(document).ready(function() {
 
             divElement = document.querySelector("#quickReplies");
             elemHeight = divElement.offsetHeight;
-            console.log(elemHeight, divElement.offsetHeight)
             const style = document.createElement('style');
             style.innerHTML = `
                 .incoming_msg {
