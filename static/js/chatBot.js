@@ -18,12 +18,12 @@ $(document).ready(function() {
     continue_fun = function() {  
         console.log("next_response")
         document.getElementById("quickReplies").innerHTML = "";
-        // var someVarName = JSON.parse(localStorage.getItem('quick_rplies'));
-        console.log(next_response.split('[')[1])
+        // var someVarName = JSON.parse(JSON.stringify(next_response));
+        // console.log(typeof(JSON.parse(JSON.stringify(next_response))))
         // attr = JSON.parse(next_response)
-        console.log(next_response)
-        // console.log(typeof(attr))
-        // setQuickResponse(next_response);
+        console.log(typeof next_response)
+        // console.log(typeof(someVarName))
+        // setQuickResponse(someVarName);
     } 
     
     clickOnModalSection = function () {
@@ -228,9 +228,8 @@ $(document).ready(function() {
                 msg.push('<div class="outgoing_msg"><div class="sent_msg"><p>' + result[i]["input_text"] + '</p></div></div>');
             }
             if (result[i]["next_response"] && i == result.length-1) {
-                next_response = result[i]["next_response"]
-                console.log(next_response)
-                
+                next_response = JSON.parse(JSON.stringify(result[i]["next_response"]));
+                console.log("next_response",typeof next_response)
             }
             if (result[i]["response_text"] && i == result.length-1) {
                 reset_button =  true;
@@ -332,7 +331,7 @@ $(document).ready(function() {
     }
 
     setQuickResponse = function (quickReplies) {
-        console.log(typeof(quickReplies))
+        console.log("quickreplies",quickReplies)
         $("#input-user").hide();
         query_flag = false;
         var buttons = "";

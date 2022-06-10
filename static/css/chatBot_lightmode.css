@@ -619,6 +619,9 @@ div#wave {
   line-height: 30px;
   color: #974CE8;
 }
+.modal-header .close {
+  color: rgb(0, 0, 0);
+}
 .setting_btn{
   padding: 22px;
   background-color: transparent;
@@ -627,6 +630,8 @@ div#wave {
 .modal-content{
   width: 80%;
   height: 100%;
+  background-color: #FFFFFF;
+  color: #000000;
 }
 iframe {
   display:block;
