@@ -42,12 +42,12 @@
     <div class="Container-fluid">
         <div id="session_id" style="display: none;">{{session_id}}</div>
         <div id="user_id" style="display: None;">{{user_id}}</div>
-        <div class="bot_profile" style="background-color: #FFFFFF;position: fixed; width: 100%; height: 60px; padding: 7px; border-bottom-width:2px; border-bottom-color:#F1F3F9; border-bottom-style: solid;">
+        <div class="bot_profile" style="background-color: #FFFFFF,#3b2a50;position: fixed; width: 100%; height: 60px; padding: 7px; border-bottom-width:2px; border-bottom-color:#F1F3F9; border-bottom-style: solid;">
             <button type="button" class="btn btn-primary setting_btn" data-toggle="modal" data-target="#exampleModal" onclick="myFunction();">
-                <div class="settings"><div class="setting1"><img src="{% static 'images/settings.jpg' %}"style="height: 20px; width: 19.45px; float: left;"></div></div>
+                <div class="settings"><div class="setting1"><img class="setting"src="{% static 'images/settings.jpg' %}"style="height: 20px; width: 19.45px; float: left;"></div></div>
             </button>
             <img src="{% static 'images/logo.jpg' %}" class="bot_p_img" id= "logo" style="height: 30px; width: 66.92px;">
-            <div class="bag"><div class="bag1"><img src="{% static 'images/bag.jpg' %}" style="height: 19px; width: 20px; float: right;"></div></div>
+            <div class="bag"><div class="bag1"><img class="bag_icon" src="{% static 'images/bag.jpg' %}" style="height: 19px; width: 20px; float: right;"></div></div>
         </div>
         <div class="chatUi">
             <div class="messaging" id="chatBotMessageSection">
@@ -83,7 +83,7 @@
         <div class="type_msg" id="input-user" style="display: none;">
             <div class="input_msg_write">
                 <div id="user-input" contenteditable="true" class="edit user-input write_msg form-submit-class" data-text="Type here..."></div>
-                <button id="submitInputButton" class="msg_send_btn" onclick="bot_api_submitInput();" disabled>
+                <button id="submitInputButton" class="msg_send_btn" onclick="submitInput1();" disabled>
                     <i class="fa fa-send-o sendTelegram" style="color: #fff;"></i>
                 </button>
             </div>
@@ -128,10 +128,35 @@
         </div>
     </div>
     <script>
+
+
+        {% comment %} $(document).ready(function(){
+           
+        }) {% endcomment %}
+        var lightstylesheet = $("<link>", {
+            rel: "stylesheet",
+            type: "text/css",
+            href: "{% static 'css/chatBot_lightmode.css' %}"
+        });
+        var darkstylesheet = $("<link>", {
+            rel: "stylesheet",
+            type: "text/css",
+            href: "{% static 'css/chatBot_darkmode.css' %}"
+        });
         $("[name=toggler]").click(function() {
-            var url = "{% url 'chatBot_darkmode' %}?uId={{user_id}}";
-            var url1 = "{% url 'chatBot_lightmode' %}?uId={{user_id}}";
-        var toShow = $(this).is(":checked") ? window.location.href = url1 : window.location.href = url;
+        if($(this).is(":checked")){
+            $('.bag_icon').attr("src","{% static 'images/bag.jpg' %}");
+            $('.setting').attr("src", "{% static 'images/settings.jpg' %}");
+        }else{
+            $('.bag_icon').attr("src", "{% static 'images/black_bag.jpg' %}");
+            $('.setting').attr("src", "{% static 'images/sett.jpg' %}");
+        }
+
+        var toShow = $(this).is(":checked") ? 
+        lightstylesheet.appendTo("head")
+        : 
+        darkstylesheet.appendTo("head");
+
         $("#" + toShow).toggle(1);
         });   
 

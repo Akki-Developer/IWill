@@ -283,8 +283,10 @@ class chathistory(APIView):
         user_id = request.data['user_id']
 
         chat = Bot_conversation.objects.filter(bot_session_id=session_id).values()
-        print(chat)
+        # next_response=list(Bot_conversation.objects.filter(bot_session_id=session_id,user_id=user_id).values('next_response').order_by('id'))    
+        # print(next_response)
         all_messages=list(Bot_conversation.objects.filter(bot_session_id=session_id,user_id=user_id).values('input_text','response_text','next_response').order_by('id'))    
+        print(all_messages)
         return JsonResponse(all_messages,safe=False)
 
 
