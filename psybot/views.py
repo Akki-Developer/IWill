@@ -82,11 +82,11 @@ def chatBot_lightmode(request):
         else:
             obj_session= Bot_sessions.objects.filter(user_id=uId).last()
             session_id= obj_session.bot_session_id
-            data_status = User_exercise_status(exercise_id="1",
-                        bot_session_id=session_id,
-                        completion_status = False
-                        )
-            data_status.save()
+            # data_status = User_exercise_status(exercise_id="1",
+            #             bot_session_id=session_id,
+            #             completion_status = False
+            #             )
+            # data_status.save()
             context = {
                 'user_id': uId,
                 'session_id': session_id
@@ -197,6 +197,10 @@ class check_status(APIView):
         print(session_id)
         status = User_exercise_status.objects.filter(bot_session_id=session_id,exercise_id="1")
         print(status)
-        all_status=list(User_exercise_status.objects.filter(bot_session_id=session_id,exercise_id="1").values('completion_status'))[-1]
+        all_status=User_exercise_status.objects.filter(bot_session_id=session_id,exercise_id="1").values('completion_status')
         print(all_status)
+        if all_status:
+            all_status = list(all_status)[-1]
+        else:
+            all_status = {'completion_status': 0}
         return JsonResponse(all_status,safe=False)       
