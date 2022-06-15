@@ -51,7 +51,11 @@ $(document).ready(function() {
         //     $("#quickReplies").html("");
         // },
         success: function (result) {
-            // alert(result)
+            if (result["completion_status"] == 1){
+                document.getElementById('status').innerHTML = "Complete"
+            }else{
+                document.getElementById('status').innerHTML = "Incomplete"
+            }
         }
     });
     };

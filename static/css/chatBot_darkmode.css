@@ -5,9 +5,18 @@ body {
   font-size: 20px;
   line-height: 27px;
   background-color: #2e2339;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
-
+.chatUi{
+  /* height: 858px; */
+  padding: 58px 28px 71px 28px;
+  overflow: auto;
+  visibility: hidden;
+}
+.messaging, .chatUi:hover, .chatUi:focus {
+  visibility: visible;
+ 
+}
 label { 
   display: inline-block; 
   border: 2px solid #974CE8;
@@ -17,7 +26,6 @@ label {
   background-color: #974CE8;
   padding: 3px;
 }
-
 p {
   font-family: "roboto", sans-serif;;
   font-style: normal;
@@ -25,12 +33,12 @@ p {
   font-size: 20px;
   line-height: 27px;
 }
-body > .chatUi {
+/* body > .chatUi {
   height: 100%;
-}
+} */
 
 * {
-  box-sizing: border-box;
+  box-sizing: border-box !important;
 }
 /* hover window */
 .setting_btn:hover {
@@ -66,6 +74,14 @@ body > .chatUi {
   -webkit-box-shadow: 5px 6px 9px -5px rgba(0, 0, 0, 0.63);
   -moz-box-shadow: 5px 6px 9px -5px rgba(0, 0, 0, 0.63);
 }
+
+.toggle-label input[type=checkbox] {
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+}
 .modal-backdrop {
   position: fixed;
   top: 60px;
@@ -86,14 +102,6 @@ body > .chatUi {
   overflow: hidden;
   outline: 0;
 }
-.toggle-label input[type=checkbox] {
-  opacity: 0;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
-}
-
 .toggle-label input[type=checkbox]+.back {
   left: -2px;
   top: -2px;
@@ -278,7 +286,7 @@ div.edit {
 
 .input_msg_write {
   position: fixed;
-  bottom: 27px;
+  bottom: 18px;
   height: 48px;
   left: 0;
   padding-left: 0;
@@ -324,11 +332,11 @@ div.edit {
   border-right: 1px solid #ddd;
 }
 
-.inbox_msg {
+/* .inbox_msg {
   clear: both;
   overflow: hidden;
   height: 100%;
-}
+} */
 
 /* .top_spac {
   margin:  0 0;
@@ -436,14 +444,15 @@ div.edit {
 }
 
 .incoming_msg {
-  height: 80vh !important;
-  margin: 1px 23px 0px 23px;
+  margin: 0;
+  height: 90vh;
+  /* margin: 1px 23px 0px 23px; */
   overflow-y: scroll;
   padding-bottom: 36px;
 }
 .received_msg {
   display: inline-block;
-  padding: 22px 0px 0px 0px;
+  padding: 22px 10px 0px 10px;
   vertical-align: top;
   width: 100%;
 }
@@ -491,9 +500,9 @@ div.edit {
   /* width: 33%; */
 }
 
-.mesgs {
+/* .mesgs {
   width: 100%;
-}
+} */
 
 .sent_msg p {
   background: #974CE8;
@@ -537,13 +546,13 @@ textarea {
   bottom: 8px;
 }
 
-.messaging {
+/* .messaging {
   height: 100%;
 }
 
 .msg_history {
   height: 100%;
-}
+} */
 
 .modalNewBody {
   background-color: #974CE8;
@@ -584,13 +593,13 @@ textarea {
   font-size: 20px;
   line-height: 27px;
 }
-body.modal-open .chatUi {
+/* body.modal-open .chatUi {
   -webkit-filter: blur(15px);
   -moz-filter: blur(15px);
   -o-filter: blur(15px);
   -ms-filter: blur(15px);
   filter: blur(15px);
-}
+} */
 button:focus {
   outline: 0;
 }
@@ -630,8 +639,8 @@ iframe {
 }
 div#wave .dot {
   display: inline-block;
-  width: 10px;
-  height: 10px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   margin-right: 3px;
   background: #ffffff;
@@ -659,35 +668,35 @@ div#wave .dot:nth-child(3) {
   }
 }
 
-.quickReplies {
-  overflow: hidden;
+/* .quickReplies {
+  overflow: hidden; */
   /* -ms-overflow-style: none; /* IE 11 */
   /* scrollbar-width: none; Firefox 64 */ 
-  text-align: center;
-}
+  /* text-align: center;
+} */
 .type_msg-responsecards {
-  position: absolute;
+  position: fixed;
   bottom: 0px;
-  left: 0; 
-  padding-left: 0;
-  background-color: transparent;
+  /* left: 0;  */
+  /* padding-left: 0; */
+  background-color: #ffffff;
   width: 100%;
-  overflow: hidden;
+  /* overflow: hidden; */
   /* overflow-x: scroll;
   overflow-y: hidden; */
   /* white-space: nowrap; */
   text-align: center;
 }
 
-#quickReplies {
-  overflow: hidden;
+/* #quickReplies {
+  overflow: hidden; */
   /* display: inline-block; */
   /* white-space: nowrap; */
   /* overflow-x: scroll; */
-  width: 100%;
+  /* width: 100%; */
   /* -ms-overflow-style: none; IE 11 */
   /* scrollbar-width: none; Firefox 64 */
-}
+/* } */
 .replies{
   color: #ffffff;
   border: 2px solid #974CE8;
@@ -695,18 +704,18 @@ div#wave .dot:nth-child(3) {
   padding: 5px;
   margin-right: 5px;
   margin-bottom: 10px;
-  display: inline-block;
+  /* display: inline-block;
   position: relative;
-  text-align: center;
+  text-align: center; */
   font-family: "roboto", sans-serif;;
   font-style: normal;
   font-weight: 400;
   font-size: 20px;
-  line-height: 27px;
-  max-width: 90%;
+  /* line-height: 27px;
+  max-width: 90%; */
   background-color: #974CE8;
-  word-wrap: break-word;
-  overflow: hidden;
+  /* word-wrap: break-word;
+  overflow: hidden; */
 }
 
 .replies p {
@@ -849,7 +858,7 @@ No media query since this is the default in Bootstrap because it is "mobile firs
     margin-left: -2px;
   }
   .received_withd_msg {
-    width: 95%;
+    width: 100%;
   }
 
   /* .sent_msg {

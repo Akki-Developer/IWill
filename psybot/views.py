@@ -64,11 +64,16 @@ def chatBot_lightmode(request):
                     )
             data.save()
             session_id = uuid.uuid1()
-            data = Bot_sessions(user_id=uId,
+            data_session = Bot_sessions(user_id=uId,
                         bot_session_id=session_id,
                         category_id = cat_id
                         )
-            data.save()
+            data_session.save()
+            data_status = User_exercise_status(exercise_id="1",
+                        bot_session_id=session_id,
+                        completion_status = False
+                        )
+            data_status.save()
             if data:
                 context = {
                     "user_id": uId,
@@ -77,126 +82,18 @@ def chatBot_lightmode(request):
         else:
             obj_session= Bot_sessions.objects.filter(user_id=uId).last()
             session_id= obj_session.bot_session_id
+            data_status = User_exercise_status(exercise_id="1",
+                        bot_session_id=session_id,
+                        completion_status = False
+                        )
+            data_status.save()
             context = {
                 'user_id': uId,
                 'session_id': session_id
             }
 
-        data = User_exercise_status(exercise_id="1",
-                    bot_session_id=session_id,
-                    completion_status = False
-                    )
-        data.save()
         # print(data)
         return render(request, "chatBot_lightmode.html", context)
-
-def chatBot_darkmode(request):
-    if request.method == 'GET':
-        # import pdb;pdb.set_trace()
-        status_code = status.HTTP_200_OK
-
-        # uId = request.GET.get('uId')
-        # name = request.GET.get('name')
-        # age = request.GET.get('age')
-        # country = request.GET.get('country')
-        # state = request.GET.get('state')
-        # city = request.GET.get('city')
-        # cat_id = request.GET.get('cat_id')
-        # gender = request.GET.get('gender')
-        # # level = request.GET.get('level')
-        # # issue = request.GET.get('issue')
-        # language = request.GET.get('language')
-        # severity = request.GET.get('severity')
-        url = "https://iwill.epsyclinic.com/index.php/Psybot/get_user_details"
-        headers = {
-            'cache-control': "no-cache"
-            }
-        uId= request.GET.get('uId')
-        payload = json.dumps({
-                                "uId": uId
-                                })
-        response = requests.request("POST", url, headers=headers,data=payload)
-        res = response.json()
-
-        # print(payload)
-
-        # print("res",res)
-        name= res['Data']['name']
-        gender= res['Data']['gender']['label']
-        age= res['Data']['age']['id']
-        country= res['Data']['country']
-        cat_id = res['Data']['issue_id']
-        state= res['Data']['state']
-        city= res['Data']['city']
-        language= res['Data']['language']
-        severity= res['Data']['level']['label']
-        request.session["uId"] = uId
-        # session_id = request.session.get('uId')
-        # session_id = uuid.uuid1()
-        # # print(session_id)
-        user = UserModel.objects.filter(userId=uId).exists()
-        if not user:
-            data = UserModel(userId=uId,
-                    name=name,
-                    gender=gender,
-                    age=age,
-                    country=country,
-                    state=state,
-                    city=city,
-                    cat_id=cat_id,
-                    # level=level,
-                    # issue=issue,
-                    language=language,
-                    severity=severity
-                    # is_staff="True"
-                    )
-            data.save()
-            # print("dataaa",data)
-
-            session_id = uuid.uuid1()
-            # print(session_id)
-            data = Bot_sessions(user_id=uId,
-                        bot_session_id=session_id,
-                        category_id = cat_id
-                        )
-            data.save()
-            if data:
-                context = {
-                    # 'success': 'True', 
-                    # 'message': 'USER Added Successfully',
-                    "user_id": uId,
-                    "session_id": session_id
-                    }
-            # return Response(context,status=status_code)
-        else:
-            obj_session= Bot_sessions.objects.filter(user_id=uId).last()
-            # print(obj_session)
-            session_id= obj_session.bot_session_id
-            # print(session_id)
-            # print("dataaa else")
-            context = {
-            # 'success': 'True', 
-            # 'message': 'User Exist',
-            'user_id': uId,
-            'session_id': session_id
-            }
-            # return Response(context,status=status_code)
-
-        # context = {
-        #     # "data":"Gfg is the best",
-        #     # "list":[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        # }
-        # # return response with template and context
-        
-        data = User_exercise_status(exercise_id="1",
-                    bot_session_id=session_id,
-                    completion_status = False
-                    )
-        data.save()
-        return render(request, "chatBot_darkmode.html", context)
-
-
-        
 
 class botAPI(APIView):
     permission_classes = (AllowAny,)
@@ -297,16 +194,9 @@ class check_status(APIView):
 
         session_id = request.data['session_id']
         user_id = request.data['user_id']
-        # print("session_id", session_id)
-        # print("user_id", user_id)
-
-        status = User_exercise_status.objects.filter(bot_session_id=session_id,exercise_id="1").values('completion_status')
-
-        # print(status)
-        # return chat
-
-        # user=request.GET['user_id']
-        # # print(user)
-    
-        all_status=list(User_exercise_status.objects.filter(bot_session_id=session_id,exercise_id="1").values('completion_status').order_by('id'))    
+        print(session_id)
+        status = User_exercise_status.objects.filter(bot_session_id=session_id,exercise_id="1")
+        print(status)
+        all_status=list(User_exercise_status.objects.filter(bot_session_id=session_id,exercise_id="1").values('completion_status'))[-1]
+        print(all_status)
         return JsonResponse(all_status,safe=False)       

@@ -19,7 +19,6 @@ from django.conf.urls import url
 from django.urls import path
 
 urlpatterns = [
-    path('chatBot_darkmode', views.chatBot_darkmode, name='chatBot_darkmode'),
     path('chatBot_lightmode', views.chatBot_lightmode, name='chatBot_lightmode'),
     # path('create_django_user', views.User.as_view(), name='user'),
     path('bot_api', views.botAPI.as_view(), name='botAPI'),
