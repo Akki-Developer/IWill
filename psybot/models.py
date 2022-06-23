@@ -106,9 +106,9 @@ class Bot_conversation(models.Model):
     user_id = models.IntegerField(null=True)
     category_id = models.IntegerField(null=True)
     input_text = models.TextField(default = '')
-    response_text = models.CharField(max_length=500, default = '') 
+    response_text = models.JSONField(blank = True) 
     created_at = models.DateField(auto_now_add=True)
-    next_response = models.TextField(blank = True)
+    next_response = models.JSONField(blank = True)
 
   
 # class Country_region(models.Model):

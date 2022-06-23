@@ -16,14 +16,10 @@ $(document).ready(function() {
         clickOnModalSection();
     } 
     continue_fun = function() {  
-        console.log("next_response")
+        console.log("next_response", next_response)
         document.getElementById("quickReplies").innerHTML = "";
-        // var someVarName = JSON.parse(JSON.stringify(next_response));
-        // console.log(typeof(JSON.parse(JSON.stringify(next_response))))
-        // attr = JSON.parse(next_response)
         console.log(typeof next_response)
-        // console.log(typeof(someVarName))
-        // setQuickResponse(someVarName);
+        setQuickResponse(next_response);
     } 
     
     clickOnModalSection = function () {
@@ -179,6 +175,7 @@ $(document).ready(function() {
 
     var increament_list = [];
     integrateResponse = function (result) {
+        console.log("result", result)
         var msg = [];
         var button_var = "";
         if(result.length == 0){
@@ -216,6 +213,10 @@ $(document).ready(function() {
             }else if (result[i]["text"]){
                 msg.push('<p class="botResult">' + result[i].text + '</p></br>');
             }
+            if (result[i]["text"] == "Calendar") {
+                query_flag = true;
+                msg.push('<p class="botResult"><iframe src="https://fullcalendar.io/demos" name="iframe_a" height="300px" width="100%" title="Iframe Example"></iframe></p></br>');
+            }
             if(result[i]["buttons"]){
                 button_var = result[i]["buttons"];
                 var buttons = []
@@ -231,14 +232,17 @@ $(document).ready(function() {
             }else if (result[i]["input_text"]){
                 msg.push('<div class="outgoing_msg"><div class="sent_msg"><p>' + result[i]["input_text"] + '</p></div></div>');
             }
-            if (result[i]["next_response"] && i == result.length-1) {
-                next_response = JSON.parse(JSON.stringify(result[i]["next_response"]));
+            if (result[i]["next_response"] != "") {
+                next_response = result[i]["next_response"];
                 console.log("next_response",typeof next_response)
             }
             if (result[i]["response_text"] && i == result.length-1) {
                 reset_button =  true;
                 query_flag = true;
-                msg.push('<p class="botResult">' + result[i].response_text + '</p></br>');
+                for (let l = 0; l < result[i].response_text.length; l++) {
+                msg.push('<p class="botResult">' + result[i].response_text[l] + '</p></br>');
+                // msg.push('<p class="botResult">' + result[i].response_text[1] + '</p></br>');
+                }
                 $("#quickReplies").html('<button class="replies" id="' + "Restart" + '" onClick="reset_fun()"><p>' + "Restart" + '</p></button>\
                 <button class="replies" id="' + "Continue" + '" onClick="continue_fun()"><p>' + "Continue" + '</p></button></br>');
             }else if (result[i]["response_text"]){
@@ -335,8 +339,8 @@ $(document).ready(function() {
     }
 
     setQuickResponse = function (quickReplies) {
-        console.log("quickreplies",quickReplies)
         $("#input-user").hide();
+        chat_history_flag = false;
         query_flag = false;
         var buttons = "";
         var check_list_buttons = "";

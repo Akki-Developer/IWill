@@ -97,9 +97,8 @@ def chatBot_lightmode(request):
 
 class botAPI(APIView):
     permission_classes = (AllowAny,)
-
     def post(self, request):
-
+        output_text = []
         user_id = request.data['user_id']
         message = request.data['message']
         restart = request.data['restart']
@@ -119,7 +118,6 @@ class botAPI(APIView):
             obj_session= Bot_sessions.objects.filter(user_id=user_id).last()
             session_id= obj_session.bot_session_id  
 
-        # if sender  "135":
         session = Bot_sessions.objects.filter(bot_session_id=session_id).get()
 
         category = session.category_id
@@ -143,20 +141,20 @@ class botAPI(APIView):
         }
         # response.json()[0]["buttons"] = ""
         response = requests.request("POST", url, headers=headers, data=payload)
-        print("response                __________", response.json()[0])
-        if "buttons" in response.json()[0]:
-            next_response = response.json()[0]["buttons"]
+
+        if "buttons" in response.json()[-1]:
+            next_response = response.json()[-1]["buttons"]
         else:
             next_response = ""
-        print("response__________",next_response)
-        output_text = response.json()[0]["text"]
-        print("response__________",output_text)
+        for i in range(len(response.json())):
+            output_text.append(response.json()[i]["text"])
+        # print("response__________",output_text)
         data = Bot_conversation(user_id=uId,
                     bot_session_id=session_id,
                     category_id = category,
                     input_text= message ,
                     response_text = output_text,
-                    next_response = str(next_response)
+                    next_response = next_response
                     )
         data.save()
         # print(data)
@@ -170,7 +168,6 @@ class botAPI(APIView):
         # print(data)
         return Response(response.json())
 
-
 class chathistory(APIView):
     permission_classes = (AllowAny,)
 
@@ -178,14 +175,9 @@ class chathistory(APIView):
 
         session_id = request.data['session_id']
         user_id = request.data['user_id']
-
-        chat = Bot_conversation.objects.filter(bot_session_id=session_id).values()
-        # next_response=list(Bot_conversation.objects.filter(bot_session_id=session_id,user_id=user_id).values('next_response').order_by('id'))    
-        # print(next_response)
-        all_messages=list(Bot_conversation.objects.filter(bot_session_id=session_id,user_id=user_id).values('input_text','response_text','next_response').order_by('id'))    
-        print(all_messages)
+        all_messages=list(Bot_conversation.objects.filter(bot_session_id=session_id,user_id=user_id).values('input_text','response_text','next_response').order_by('id')) 
+        print(all_messages)   
         return JsonResponse(all_messages,safe=False)
-
 
 class check_status(APIView):
     permission_classes = (AllowAny,)
@@ -194,11 +186,8 @@ class check_status(APIView):
 
         session_id = request.data['session_id']
         user_id = request.data['user_id']
-        print(session_id)
         status = User_exercise_status.objects.filter(bot_session_id=session_id,exercise_id="1")
-        print(status)
         all_status=User_exercise_status.objects.filter(bot_session_id=session_id,exercise_id="1").values('completion_status')
-        print(all_status)
         if all_status:
             all_status = list(all_status)[-1]
         else:
