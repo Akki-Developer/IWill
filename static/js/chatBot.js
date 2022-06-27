@@ -16,10 +16,11 @@ $(document).ready(function() {
         clickOnModalSection();
     } 
     continue_fun = function() {  
-        console.log("next_response", next_response)
-        document.getElementById("quickReplies").innerHTML = "";
-        console.log(typeof next_response)
-        setQuickResponse(next_response);
+        if (next_response){
+            setQuickResponse(next_response);
+        }else{
+            $("#input-user").show();
+        }
     } 
     
     clickOnModalSection = function () {
@@ -163,10 +164,10 @@ $(document).ready(function() {
     
     setInput = function(text,value) {
         text = text.replace(/\_/g, "\'")
-        $("#user-input").text(text);
         if (chat_history_flag){
             chat_history_submitInput(value);
         }else{
+            $("#user-input").text(text);
             bot_api_submitInput(value);
         }
         $("#input-user").hide();
