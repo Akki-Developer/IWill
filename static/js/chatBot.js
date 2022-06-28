@@ -49,9 +49,9 @@ $(document).ready(function() {
         // },
         success: function (result) {
             if (result["completion_status"] == 1){
-                document.getElementById('status').innerHTML = "Complete"
+                document.getElementById('status').innerHTML = "Week Completeed"
             }else{
-                document.getElementById('status').innerHTML = "Incomplete"
+                document.getElementById('status').innerHTML = "Week Inprogress"
             }
         }
     });
@@ -214,10 +214,10 @@ $(document).ready(function() {
             }else if (result[i]["text"]){
                 msg.push('<p class="botResult">' + result[i].text + '</p></br>');
             }
-            if (result[i]["text"] == "Calendar") {
-                query_flag = true;
-                msg.push('<p class="botResult"><iframe src="https://fullcalendar.io/demos" name="iframe_a" height="300px" width="100%" title="Iframe Example"></iframe></p></br>');
-            }
+            // if (result[i]["text"] == "Calendar") {
+            //     query_flag = true;
+            //     msg.push('<p class="botResult"><iframe src="https://fullcalendar.io/demos" name="iframe_a" height="300px" width="100%" title="Iframe Example"></iframe></p></br>');
+            // }
             if(result[i]["buttons"]){
                 button_var = result[i]["buttons"];
                 var buttons = []
