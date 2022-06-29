@@ -10,18 +10,21 @@ $(document).ready(function() {
     var restart = false;
     var restart_count = 0;
     var next_response;
+    var input_type=false;
 
     reset_fun = function() {  
         chat_history_flag = false;
         clickOnModalSection();
     } 
     continue_fun = function() {  
+        // document.getElementById("quickReplies").innerHTML = "";
         if (next_response){
             setQuickResponse(next_response);
         }else{
             $("#input-user").show();
         }
-    } 
+        // setQuickResponse(next_response);
+    }
     
     clickOnModalSection = function () {
         $("#chatBotMessageSection").show();
@@ -49,9 +52,9 @@ $(document).ready(function() {
         // },
         success: function (result) {
             if (result["completion_status"] == 1){
-                document.getElementById('status').innerHTML = "Week Completeed"
+                document.getElementById('status').innerHTML = "Complete"
             }else{
-                document.getElementById('status').innerHTML = "Week Inprogress"
+                document.getElementById('status').innerHTML = "Incomplete"
             }
         }
     });
@@ -176,7 +179,6 @@ $(document).ready(function() {
 
     var increament_list = [];
     integrateResponse = function (result) {
-        console.log("result", result)
         var msg = [];
         var button_var = "";
         if(result.length == 0){
@@ -214,10 +216,14 @@ $(document).ready(function() {
             }else if (result[i]["text"]){
                 msg.push('<p class="botResult">' + result[i].text + '</p></br>');
             }
-            // if (result[i]["text"] == "Calendar") {
-            //     query_flag = true;
-            //     msg.push('<p class="botResult"><iframe src="https://fullcalendar.io/demos" name="iframe_a" height="300px" width="100%" title="Iframe Example"></iframe></p></br>');
-            // }
+            if (result[i]["text"] == "Calendar") {
+                query_flag = true;
+                // msg.push('<p class="botResult"><iframe src="https://fullcalendar.io/demos" name="iframe_a" height="300px" width="100%" title="Iframe Example"></iframe></p></br>');
+            }
+            if (result[i]["text"] == "OK, Thanks.") {
+                input_type=true;
+                query_flag = true;
+            }
             if(result[i]["buttons"]){
                 button_var = result[i]["buttons"];
                 var buttons = []
@@ -235,7 +241,6 @@ $(document).ready(function() {
             }
             if (result[i]["next_response"] != "") {
                 next_response = result[i]["next_response"];
-                console.log("next_response",typeof next_response)
             }
             if (result[i]["response_text"] && i == result.length-1) {
                 reset_button =  true;
@@ -302,7 +307,7 @@ $(document).ready(function() {
                         }
                         if(buttons && k==textReplies.length)	{
                             setQuickResponse(buttons);  
-                        }else if (k==textReplies.length){
+                        }else if (k==textReplies.length && input_type==false){
                             $("#input-user").show();
                         }
                     }, 1000);
