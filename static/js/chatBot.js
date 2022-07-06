@@ -10,6 +10,7 @@ $(document).ready(function() {
     var restart = false;
     var restart_count = 0;
     var next_response;
+    var input_text;
     var input_type=false;
 
     reset_fun = function() {  
@@ -116,6 +117,7 @@ $(document).ready(function() {
     };
 
     bot_api_submitInput = function (value) {
+        input_text = "";
         if (restart_count == 0){
             restart = true;
         }else{
@@ -234,6 +236,7 @@ $(document).ready(function() {
                 }
             }
             if (result[i]["input_text"] && i == result.length-1) {
+                input_text = result[i]["input_text"]
                 query_flag = true;
                 msg.push('<div class="outgoing_msg"><div class="sent_msg"><p>' + result[i]["input_text"] + '</p></div></div>');
             }else if (result[i]["input_text"]){
@@ -373,7 +376,7 @@ $(document).ready(function() {
                     check_payload = payload1
                     check_list_buttons += '<label for="'+ quickReplies[i].title +'"> <input type="checkbox" name="color" value="'+ quickReplies[i].title +'" id="'+ quickReplies[i].title +'">'+ quickReplies[i].title +'</label></br>';
                 }
-                else if (quickReplies[i].title == "I'm done for today!"){
+                else if (quickReplies[i].title == "I'm done for today!" && input_text == "I'm done for today!"){
                     continue;
                 } {
                     title1 = quickReplies[i].title;
