@@ -267,7 +267,9 @@ $(document).ready(function() {
     addTextResponse = function (textReplies, buttons, increament_list, setQuickResponse, zoomimage) {
         return new Promise(function(resolve, reject) {
             var k = 0 ;
+            var speed_var=0;
             function chatspeed(){
+                // var speed_var=0;
                 if (chat_history_flag){
                     $("#wave").hide();
                     outputArea.append(`<div class="received_withd_msg user-message">${textReplies[k]}</div>`);
@@ -296,6 +298,7 @@ $(document).ready(function() {
                         $(".incoming_msg").scrollTop($(".incoming_msg").prop('scrollHeight'));
                         k++;
                         if (k < textReplies.length){
+                            speed_var = 5000;
                             chatspeed()
                         }
                         var len = increament_list.length;
@@ -310,7 +313,8 @@ $(document).ready(function() {
                         }else if (k==textReplies.length && input_type==false){
                             $("#input-user").show();
                         }
-                    }, 1000);
+                        console.log(1*speed_var)
+                    }, 1*speed_var);
                 }
                 // $(".incoming_msg").scrollTop($("#chat-output").prop('scrollHeight'));
                 $("#wave").show();
@@ -369,7 +373,9 @@ $(document).ready(function() {
                     check_payload = payload1
                     check_list_buttons += '<label for="'+ quickReplies[i].title +'"> <input type="checkbox" name="color" value="'+ quickReplies[i].title +'" id="'+ quickReplies[i].title +'">'+ quickReplies[i].title +'</label></br>';
                 }
-                else {
+                else if (quickReplies[i].title == "I'm done for today!"){
+                    continue;
+                } {
                     title1 = quickReplies[i].title;
                     payload1 = quickReplies[i].payload;
                     title2 = title1.replace(/\'/g, "_")
