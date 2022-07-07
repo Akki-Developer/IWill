@@ -42,28 +42,29 @@ $(document).ready(function() {
             "session_id": session, //add the user ID here
             "user_id": user_id
         });
+        document.getElementById('status').innerHTML = "";
         console.log(request_chat_history);
         jQuery.ajax({
-        url: 'http://127.0.0.1:8000/api/check_status',
-        type: "POST",
-        data: request_chat_history,
-        dataType: "json",
-        contentType: "application/json;charset=utf-8",
-        // beforeSend: function (x) {
-        //     query_flag = false;
-        //     $("#quickReplies").html("");
-        // },
-        success: function (result) {
-            for (var i = 0; i < result.length; i++) {
-                if (result[i]["completion_status"] == 1){
-                    week_count = result[i]["week_count"]
-                    status.append(`<div ><p>Week ${week_count} : Completed</p></div>`)
+            url: 'http://127.0.0.1:8000/api/check_status',
+            type: "POST",
+            data: request_chat_history,
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+            // beforeSend: function (x) {
+            //     query_flag = false;
+            //     $("#quickReplies").html("");
+            // },
+            success: function (result) {
+                for (var i = 0; i < result.length; i++) {
+                    if (result[i]["completion_status"] == 1){
+                        week_count = result[i]["week_count"]
+                        status.append(`<div ><p>Week ${week_count} : Completed</p></div>`)
+                    }
                 }
+                week_count = result.length+1
+                status.append(`<div ><p>Week ${week_count} : InProgress</p></div>`)
             }
-            week_count = result.length+1
-            status.append(`<div ><p>Week ${week_count} : InProgress</p></div>`)
-        }
-    });
+        });
     };
 
     $("#user-input").keydown(function (e) {
