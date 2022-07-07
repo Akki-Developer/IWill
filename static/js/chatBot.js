@@ -53,9 +53,9 @@ $(document).ready(function() {
         // },
         success: function (result) {
             if (result["completion_status"] == 1){
-                document.getElementById('status').innerHTML = "Complete"
+                document.getElementById('status').innerHTML = "Week1   Complete"
             }else{
-                document.getElementById('status').innerHTML = "Incomplete"
+                document.getElementById('status').innerHTML = "Week1   Inprogress"
             }
         }
     });
@@ -169,7 +169,10 @@ $(document).ready(function() {
     
     setInput = function(text,value) {
         text = text.replace(/\_/g, "\'")
+        $("#user-input").text(text);
         if (chat_history_flag){
+            text = ""
+            $("#user-input").text(text);
             chat_history_submitInput(value);
         }else{
             $("#user-input").text(text);
@@ -376,7 +379,7 @@ $(document).ready(function() {
                     check_payload = payload1
                     check_list_buttons += '<label for="'+ quickReplies[i].title +'"> <input type="checkbox" name="color" value="'+ quickReplies[i].title +'" id="'+ quickReplies[i].title +'">'+ quickReplies[i].title +'</label></br>';
                 }
-                else if (quickReplies[i].title == "I'm done for today!" && input_text == "I'm done for today!"){
+                else if (quickReplies[i].title == "I'm done for today!" && input_text == "I'm done for today!" && input_text == "I'm done for today!"){
                     continue;
                 } {
                     title1 = quickReplies[i].title;

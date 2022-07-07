@@ -56,7 +56,7 @@ def chatBot_lightmode(request):
                     country=country,
                     state=state,
                     city=city,
-                    cat_id=cat_id,
+                    cat_id=category_id,
                     # level=level,
                     # issue=issue,
                     language=language,
@@ -67,7 +67,7 @@ def chatBot_lightmode(request):
             session_id = uuid.uuid1()
             data = Bot_sessions(user_id=uId,
                         bot_session_id=session_id,
-                        category_id = cat_id
+                        category_id = category_id
                         )
             data.save()
             if data:
@@ -85,82 +85,12 @@ def chatBot_lightmode(request):
             }
 
             
-        data = User_exercise_status(exercise_id="1",
-                    bot_session_id=session_id,
-                    completion_status = False
-                    )
-        data.save()
+        # data = User_exercise_status(exercise_id="1",
+        #             bot_session_id=session_id,
+        #             completion_status = False
+        #             )
+        # data.save()
         return render(request, "chatBot_lightmode.html", context)
-
-def chatBot_darkmode(request):
-    if request.method == 'GET':
-        status_code = status.HTTP_200_OK
-
-        url = "https://iwill.epsyclinic.com/index.php/Psybot/get_user_details"
-        headers = {
-            'cache-control': "no-cache"
-            }
-        uId= request.GET.get('uId')
-        payload = json.dumps({
-                                "uId": uId
-                                })
-        response = requests.request("POST", url, headers=headers,data=payload)
-        res = response.json()
-
-        name= res['Data']['name']
-        gender= res['Data']['gender']['label']
-        age= res['Data']['age']['id']
-        country= res['Data']['country']
-        cat_id = res['Data']['issue_id']
-        state= res['Data']['state']
-        city= res['Data']['city']
-        language= res['Data']['language']
-        severity= res['Data']['level']['label']
-        request.session["uId"] = uId
-        user = UserModel.objects.filter(userId=uId).exists()
-        if not user:
-            data = UserModel(userId=uId,
-                    name=name,
-                    gender=gender,
-                    age=age,
-                    country=country,
-                    state=state,
-                    city=city,
-                    cat_id=cat_id,
-                    # level=level,
-                    # issue=issue,
-                    language=language,
-                    severity=severity
-                    # is_staff="True"
-                    )
-            data.save()
-
-            session_id = uuid.uuid1()
-            data = Bot_sessions(user_id=uId,
-                        bot_session_id=session_id,
-                        category_id = cat_id
-                        )
-            data.save()
-            if data:
-                context = {
-                    "user_id": uId,
-                    "session_id": session_id
-                    }
-        else:
-            obj_session= Bot_sessions.objects.filter(user_id=uId).last()
-            session_id= obj_session.bot_session_id
-            context = {
-            'user_id': uId,
-            'session_id': session_id
-            }
-        
-        data = User_exercise_status(exercise_id="1",
-                    bot_session_id=session_id,
-                    completion_status = False
-                    )
-        data.save()
-        return render(request, "chatBot_darkmode.html", context)
-
 
         
 
@@ -234,28 +164,28 @@ class botAPI(APIView):
                     next_response = next_response
                     )
         data.save()
-
-        for output_text in output_text:
-            if output_text in ["session0", "session"]:
+        # print(next_response)
+        for next_response in next_response:
+            if next_response["payload"] in ["/session1"]:
                 data = User_exercise_status(exercise_id=category,
                         bot_session_id=session_id,
                         completion_status = True,
                         week_count = 1
                         )
                 data.save()
-            if output_text in ["session1", "session0"]:
+            if next_response["payload"] in ["/session0"]:
                 data = User_exercise_status(exercise_id=category,
                         bot_session_id=session_id,
                         completion_status = True,
                         week_count = 2
                         )
                 data.save()  
-            if output_text in ["session2"]:
-                data = User_exercise_status(exercise_id=category,
-                        bot_session_id=session_id,
-                        completion_status = True,
-                        week_count = 3
-                        )
+            # if output_text in ["session2"]:
+            #     data = User_exercise_status(exercise_id=category,
+            #             bot_session_id=session_id,
+            #             completion_status = True,
+            #             week_count = 3
+            #             )
                 data.save() 
            
         return Response(response.json())
