@@ -166,27 +166,27 @@ class botAPI(APIView):
         data.save()
         # print(next_response)
         for next_response in next_response:
+            if next_response["payload"] in ["/session0"]:
+                data = User_exercise_status(exercise_id=category,
+                        bot_session_id=session_id,
+                        completion_status = True,
+                        week_count = 0
+                        )
+                data.save()
             if next_response["payload"] in ["/session1"]:
                 data = User_exercise_status(exercise_id=category,
                         bot_session_id=session_id,
                         completion_status = True,
                         week_count = 1
                         )
-                data.save()
-            if next_response["payload"] in ["/session0"]:
+                data.save()  
+            if next_response["payload"] in ["/session2"]:
                 data = User_exercise_status(exercise_id=category,
                         bot_session_id=session_id,
                         completion_status = True,
                         week_count = 2
                         )
                 data.save()  
-            # if output_text in ["session2"]:
-            #     data = User_exercise_status(exercise_id=category,
-            #             bot_session_id=session_id,
-            #             completion_status = True,
-            #             week_count = 3
-            #             )
-                data.save() 
            
         return Response(response.json())
 
