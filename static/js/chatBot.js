@@ -1,5 +1,6 @@
 $(document).ready(function() {
     var outputArea = $("#chat-output");
+    var status = $("#status");
     $('#myModal').modal('show');
     var increament = 0;
     var query_flag = false;
@@ -35,12 +36,13 @@ $(document).ready(function() {
         
         setInput("Hello","Hello");
     }
-
+    
     statusButton = function () {
         var request_chat_history = JSON.stringify({
             "session_id": session, //add the user ID here
             "user_id": user_id
         });
+        console.log(request_chat_history);
         jQuery.ajax({
         url: 'http://127.0.0.1:8000/api/check_status',
         type: "POST",
@@ -52,11 +54,14 @@ $(document).ready(function() {
         //     $("#quickReplies").html("");
         // },
         success: function (result) {
-            if (result["completion_status"] == 1){
-                document.getElementById('status').innerHTML = "Week1   Complete"
-            }else{
-                document.getElementById('status').innerHTML = "Week1   Inprogress"
+            for (var i = 0; i < result.length; i++) {
+                if (result[i]["completion_status"] == 1){
+                    week_count = result[i]["week_count"]
+                    status.append(`<div ><p>Week ${week_count} : Completed</p></div>`)
+                }
             }
+            week_count = result.length+1
+            status.append(`<div ><p>Week ${week_count} : InProgress</p></div>`)
         }
     });
     };
