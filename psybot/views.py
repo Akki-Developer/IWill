@@ -215,5 +215,5 @@ class check_status(APIView):
 
         status = User_exercise_status.objects.filter(bot_session_id=session_id).values('exercise_id','week_count','completion_status')
     
-        all_status=list(User_exercise_status.objects.filter(bot_session_id=session_id).values('exercise_id','week_count','completion_status').order_by('id'))    
-        return JsonResponse(all_status,safe=False)       
+        all_status=list(User_exercise_status.objects.filter(bot_session_id=session_id).values('exercise_id','week_count','completion_status').order_by('week_count'))    
+        return JsonResponse(all_status,safe=False) 
