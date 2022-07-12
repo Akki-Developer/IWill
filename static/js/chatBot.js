@@ -310,7 +310,7 @@ $(document).ready(function() {
                         $(".incoming_msg").scrollTop($(".incoming_msg").prop('scrollHeight'));
                         k++;
                         if (k < textReplies.length){
-                            speed_var = 5000;
+                            speed_var = 3000;
                             chatspeed()
                         }
                         var len = increament_list.length;
