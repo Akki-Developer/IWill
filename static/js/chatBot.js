@@ -15,10 +15,12 @@ $(document).ready(function() {
     var input_type=false;
 
     reset_fun = function() {  
+        restart_count = 0
         chat_history_flag = false;
         clickOnModalSection();
     } 
-    continue_fun = function() {  
+    continue_fun = function() {
+        restart_count = restart_count+1;
         // document.getElementById("quickReplies").innerHTML = "";
         if (next_response){
             setQuickResponse(next_response);
@@ -310,7 +312,7 @@ $(document).ready(function() {
                         $(".incoming_msg").scrollTop($(".incoming_msg").prop('scrollHeight'));
                         k++;
                         if (k < textReplies.length){
-                            speed_var = 3000;
+                            speed_var = 4;
                             chatspeed()
                         }
                         var len = increament_list.length;
@@ -325,8 +327,8 @@ $(document).ready(function() {
                         }else if (k==textReplies.length && input_type==false){
                             $("#input-user").show();
                         }
-                        console.log(1*speed_var)
-                    }, 1*speed_var);
+                        console.log(1000*speed_var)
+                    }, 1000*speed_var);
                 }
                 // $(".incoming_msg").scrollTop($("#chat-output").prop('scrollHeight'));
                 $("#wave").show();
@@ -387,7 +389,8 @@ $(document).ready(function() {
                 }
                 else if (quickReplies[i].title == "I'm done for today!" && input_text == "I'm done for today!" && input_text == "I'm done for today!"){
                     continue;
-                } {
+                } 
+                else{
                     title1 = quickReplies[i].title;
                     payload1 = quickReplies[i].payload;
                     title2 = title1.replace(/\'/g, "_")
