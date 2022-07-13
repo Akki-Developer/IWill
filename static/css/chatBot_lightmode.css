@@ -7,7 +7,9 @@ body {
   background-color: #FFFFFF;
   /* overflow: hidden; */
 }
-
+#status{
+  color: rgb(7, 86, 0);
+}
 .chatUi{
   /* height: 858px; */
   padding: 58px 28px 71px 28px;

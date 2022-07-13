@@ -151,7 +151,9 @@ class botAPI(APIView):
         try:
             if "buttons" in response.json()[0]:
                 next_response = response.json()[0]["buttons"]
-            else:    
+            elif "buttons" in response.json()[i]:
+                next_response = response.json()[i]["buttons"]
+            else :    
                 next_response = ""
         except:
             next_response = ""
@@ -210,9 +212,10 @@ class check_status(APIView):
 
     def post(self, request):
 
-        session_id = request.data['session_id']
+        session_id1 = request.data['session_id']
         user_id = request.data['user_id']
-
+        session_id=list(Bot_conversation.objects.filter(user_id=user_id).values('bot_session_id').order_by('id'))[-1]["bot_session_id"]  
+        print(session_id,session_id1)
         status = User_exercise_status.objects.filter(bot_session_id=session_id).values('exercise_id','week_count','completion_status')
     
         all_status=list(User_exercise_status.objects.filter(bot_session_id=session_id).values('exercise_id','week_count','completion_status').order_by('week_count'))    

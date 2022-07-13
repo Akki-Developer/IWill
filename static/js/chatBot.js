@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    // var URl = "https://backend.iwillcare.io"
+    var URl = "http://127.0.0.1:8000"
     var outputArea = $("#chat-output");
     var status = $("#status");
     $('#myModal').modal('show');
@@ -13,21 +15,19 @@ $(document).ready(function() {
     var next_response;
     var input_text;
     var input_type=false;
-
+    console.log(session);
     reset_fun = function() {  
         restart_count = 0
         chat_history_flag = false;
         clickOnModalSection();
-    } 
+    }
     continue_fun = function() {
         restart_count = restart_count+1;
-        // document.getElementById("quickReplies").innerHTML = "";
         if (next_response){
             setQuickResponse(next_response);
         }else{
             $("#input-user").show();
         }
-        // setQuickResponse(next_response);
     }
     
     clickOnModalSection = function () {
@@ -47,7 +47,7 @@ $(document).ready(function() {
         document.getElementById('status').innerHTML = "";
         console.log(request_chat_history);
         jQuery.ajax({
-            url: 'http://127.0.0.1:8000/api/check_status',
+            url: URl+'/api/check_status',
             type: "POST",
             data: request_chat_history,
             dataType: "json",
@@ -59,7 +59,7 @@ $(document).ready(function() {
             success: function (result) {
                 for (var i = 0; i < result.length; i++) {
                     if (result[i]["completion_status"] == 1){
-                        week_count = result[i]["week_count"]
+                        week_count = result[i]["week_count"]+1
                         status.append(`<div ><p>Week ${week_count} : Completed</p></div>`)
                     }
                 }
@@ -138,6 +138,9 @@ $(document).ready(function() {
         }else if(message !== '' || message !== null || message !== 'null' && query_flag==true) {
             value = message.replace(/\\n/g, "\\n")
         }
+        if(value == "Hello" && restart == true){
+            message = value
+        }
         //Remove previous padding from bot reply
         $("#input-user").hide()
         query_flag = false
@@ -177,6 +180,7 @@ $(document).ready(function() {
     
     setInput = function(text,value) {
         text = text.replace(/\_/g, "\'")
+        console.log(text)
         $("#user-input").text(text);
         if (chat_history_flag){
             text = ""
@@ -221,6 +225,7 @@ $(document).ready(function() {
             }
             if (result[i]["attachment"]){
                 query_flag = true;
+                console.log(result[i]["attachment"]["payload"]["src"])
                 msg.push( '<p class="botResult" ><iframe width="300" height="200" src="' + result[i]["attachment"]["payload"]["src"] + '&enablejsapi=1"  frameborder="0" style="border: solid 4px #37474F" ></iframe></p><div class="clearfix"></div></br>');
             }
             if (result[i]["text"] && i == result.length-1) {
@@ -281,7 +286,7 @@ $(document).ready(function() {
     addTextResponse = function (textReplies, buttons, increament_list, setQuickResponse, zoomimage) {
         return new Promise(function(resolve, reject) {
             var k = 0 ;
-            var speed_var=0;
+            var speed_var=1000;
             function chatspeed(){
                 // var speed_var=0;
                 if (chat_history_flag){
@@ -312,7 +317,7 @@ $(document).ready(function() {
                         $(".incoming_msg").scrollTop($(".incoming_msg").prop('scrollHeight'));
                         k++;
                         if (k < textReplies.length){
-                            speed_var = 4;
+                            speed_var = 4000;
                             chatspeed()
                         }
                         var len = increament_list.length;
@@ -327,8 +332,8 @@ $(document).ready(function() {
                         }else if (k==textReplies.length && input_type==false){
                             $("#input-user").show();
                         }
-                        console.log(1000*speed_var)
-                    }, 1000*speed_var);
+                        console.log(1*speed_var)
+                    }, 1*speed_var);
                 }
                 // $(".incoming_msg").scrollTop($("#chat-output").prop('scrollHeight'));
                 $("#wave").show();
