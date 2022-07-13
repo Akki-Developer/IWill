@@ -97,7 +97,7 @@ $(document).ready(function() {
             "user_id": user_id
         });
         jQuery.ajax({
-            url: 'http://127.0.0.1:8000/api/chat_history',
+            url: URl+'/api/chat_history',
             type: "POST",
             data: request_chat_history,
             dataType: "json",
@@ -156,7 +156,7 @@ $(document).ready(function() {
         });
         restart_count = restart_count+1;
         jQuery.ajax({
-            url: 'http://127.0.0.1:8000/api/bot_api',
+            url: URl+'/api/bot_api',
             type: "POST",
             data: request,
             dataType: "json",

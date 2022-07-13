@@ -131,7 +131,7 @@ class botAPI(APIView):
         if bot == "Depression":
             url = "http://localhost:5005/webhooks/rest/webhook"
         elif bot == "Anxiety":
-            url = "http://localhost:5005/webhooks/rest/webhook"    
+            url = "http://localhost:5006/webhooks/rest/webhook"    
         payload = json.dumps({
         "sender": sender,
         "message": message
