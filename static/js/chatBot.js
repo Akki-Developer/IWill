@@ -1,6 +1,6 @@
 $(document).ready(function() {
-    // var URl = "https://backend.iwillcare.io"
-    var URl = "http://127.0.0.1:8000"
+    var URl = "https://backend.iwillcare.io"
+    // var URl = "http://127.0.0.1:8000"
     var outputArea = $("#chat-output");
     var status = $("#status");
     $('#myModal').modal('show');
@@ -144,8 +144,10 @@ $(document).ready(function() {
         //Remove previous padding from bot reply
         $("#input-user").hide()
         query_flag = false
-        outputArea.append(`<div class="outgoing_msg"><div class="sent_msg"><p>${message}</p></div></div>`);
-        $(".incoming_msg").scrollTop($(".incoming_msg").prop('scrollHeight'));
+        if (message){
+            outputArea.append(`<div class="outgoing_msg"><div class="sent_msg"><p>${message}</p></div></div>`);
+            $(".incoming_msg").scrollTop($(".incoming_msg").prop('scrollHeight'));
+        }
         
         var request = JSON.stringify({
             "sender": session, //add the user ID here

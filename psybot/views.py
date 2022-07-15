@@ -166,30 +166,47 @@ class botAPI(APIView):
                     next_response = next_response
                     )
         data.save()
-        # print(next_response)
-        for next_response in next_response:
-            if next_response["payload"] in ["/session0"]:
-                data = User_exercise_status(exercise_id=category,
-                        bot_session_id=session_id,
-                        completion_status = True,
-                        week_count = 0
-                        )
-                data.save()
-            if next_response["payload"] in ["/session1"]:
-                data = User_exercise_status(exercise_id=category,
-                        bot_session_id=session_id,
-                        completion_status = True,
-                        week_count = 1
-                        )
-                data.save()  
-            if next_response["payload"] in ["/session2"]:
-                data = User_exercise_status(exercise_id=category,
-                        bot_session_id=session_id,
-                        completion_status = True,
-                        week_count = 2
-                        )
-                data.save()  
-           
+
+        if category in [1,3,4,7]:
+            for next_response in next_response:
+                if next_response["payload"] in ["/session0"]:
+                    data = User_exercise_status(exercise_id=category,
+                            bot_session_id=session_id,
+                            completion_status = True,
+                            week_count = 0
+                            )
+                    data.save()
+                if next_response["payload"] in ["/session1"]:
+                    data = User_exercise_status(exercise_id=category,
+                            bot_session_id=session_id,
+                            completion_status = True,
+                            week_count = 1
+                            )
+                    data.save()  
+                if next_response["payload"] in ["/session2"]:
+                    data = User_exercise_status(exercise_id=category,
+                            bot_session_id=session_id,
+                            completion_status = True,
+                            week_count = 2
+                            )
+                    data.save()  
+                print(next_response["payload"],"")
+                if next_response["payload"] in ["/session"]:
+                    data = User_exercise_status(exercise_id=category,
+                            bot_session_id=session_id,
+                            completion_status = True,
+                            week_count = 0
+                            )
+                    data.save()
+        else:
+            for next_response in next_response:
+                if next_response["payload"] in ["/session0"]:
+                    data = User_exercise_status(exercise_id=category,
+                            bot_session_id=session_id,
+                            completion_status = True,
+                            week_count = 1
+                            )
+                    data.save()  
         return Response(response.json())
 
 
@@ -201,7 +218,7 @@ class chathistory(APIView):
         session_id = request.data['session_id']
         user_id = request.data['user_id']
 
-        chat = Bot_conversation.objects.filter(bot_session_id=session_id).values()
+        # chat = Bot_conversation.objects.filter(bot_session_id=session_id).values()
 
         all_messages=list(Bot_conversation.objects.filter(bot_session_id=session_id,user_id=user_id).values('input_text','response_text','next_response').order_by('id'))    
         return JsonResponse(all_messages,safe=False)
