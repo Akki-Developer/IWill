@@ -1,6 +1,6 @@
 $(document).ready(function() {
-    var URl = "https://backend.iwillcare.io"
-    // var URl = "http://127.0.0.1:8000"
+    // var URl = "https://backend.iwillcare.io"
+    var URl = "http://127.0.0.1:8000"
     var outputArea = $("#chat-output");
     var status = $("#status");
     $('#myModal').modal('show');
