@@ -319,7 +319,7 @@ $(document).ready(function() {
                         $(".incoming_msg").scrollTop($(".incoming_msg").prop('scrollHeight'));
                         k++;
                         if (k < textReplies.length){
-                            speed_var = 4000;
+                            speed_var = 2000;
                             chatspeed()
                         }
                         var len = increament_list.length;
