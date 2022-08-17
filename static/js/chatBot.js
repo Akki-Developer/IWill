@@ -1,5 +1,8 @@
 $(document).ready(function() {
+    // var URl = "https://backend.iwillcare.io"
+    var URl = "http://127.0.0.1:8000"
     var outputArea = $("#chat-output");
+    var status = $("#status");
     $('#myModal').modal('show');
     var increament = 0;
     var query_flag = false;
@@ -10,18 +13,22 @@ $(document).ready(function() {
     var restart = false;
     var restart_count = 0;
     var next_response;
-
+    var input_text;
+    var input_type=false;
+    console.log(session);
     reset_fun = function() {  
+        restart_count = 0
         chat_history_flag = false;
         clickOnModalSection();
-    } 
-    continue_fun = function() {  
+    }
+    continue_fun = function() {
+        restart_count = restart_count+1;
         if (next_response){
             setQuickResponse(next_response);
         }else{
             $("#input-user").show();
         }
-    } 
+    }
     
     clickOnModalSection = function () {
         $("#chatBotMessageSection").show();
@@ -31,30 +38,35 @@ $(document).ready(function() {
         
         setInput("Hello","Hello");
     }
-
+    
     statusButton = function () {
         var request_chat_history = JSON.stringify({
             "session_id": session, //add the user ID here
             "user_id": user_id
         });
+        document.getElementById('status').innerHTML = "";
+        console.log(request_chat_history);
         jQuery.ajax({
-        url: 'http://127.0.0.1:8000/api/check_status',
-        type: "POST",
-        data: request_chat_history,
-        dataType: "json",
-        contentType: "application/json;charset=utf-8",
-        // beforeSend: function (x) {
-        //     query_flag = false;
-        //     $("#quickReplies").html("");
-        // },
-        success: function (result) {
-            if (result["completion_status"] == 1){
-                document.getElementById('status').innerHTML = "Week Completeed"
-            }else{
-                document.getElementById('status').innerHTML = "Week Inprogress"
+            url: URl+'/api/check_status',
+            type: "POST",
+            data: request_chat_history,
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+            // beforeSend: function (x) {
+            //     query_flag = false;
+            //     $("#quickReplies").html("");
+            // },
+            success: function (result) {
+                for (var i = 0; i < result.length; i++) {
+                    if (result[i]["completion_status"] == 1){
+                        week_count = result[i]["week_count"]+1
+                        status.append(`<div ><p>Week ${week_count} : Completed</p></div>`)
+                    }
+                }
+                week_count = result.length+1
+                status.append(`<div ><p>Week ${week_count} : InProgress</p></div>`)
             }
-        }
-    });
+        });
     };
 
     $("#user-input").keydown(function (e) {
@@ -85,7 +97,7 @@ $(document).ready(function() {
             "user_id": user_id
         });
         jQuery.ajax({
-            url: 'http://127.0.0.1:8000/api/chat_history',
+            url: URl+'/api/chat_history',
             type: "POST",
             data: request_chat_history,
             dataType: "json",
@@ -113,6 +125,7 @@ $(document).ready(function() {
     };
 
     bot_api_submitInput = function (value) {
+        input_text = "";
         if (restart_count == 0){
             restart = true;
         }else{
@@ -125,11 +138,16 @@ $(document).ready(function() {
         }else if(message !== '' || message !== null || message !== 'null' && query_flag==true) {
             value = message.replace(/\\n/g, "\\n")
         }
+        if(value == "Hello" && restart == true){
+            message = value
+        }
         //Remove previous padding from bot reply
         $("#input-user").hide()
         query_flag = false
-        outputArea.append(`<div class="outgoing_msg"><div class="sent_msg"><p>${message}</p></div></div>`);
-        $(".incoming_msg").scrollTop($(".incoming_msg").prop('scrollHeight'));
+        if (message){
+            outputArea.append(`<div class="outgoing_msg"><div class="sent_msg"><p>${message}</p></div></div>`);
+            $(".incoming_msg").scrollTop($(".incoming_msg").prop('scrollHeight'));
+        }
         
         var request = JSON.stringify({
             "sender": session, //add the user ID here
@@ -140,7 +158,7 @@ $(document).ready(function() {
         });
         restart_count = restart_count+1;
         jQuery.ajax({
-            url: 'http://127.0.0.1:8000/api/bot_api',
+            url: URl+'/api/bot_api',
             type: "POST",
             data: request,
             dataType: "json",
@@ -164,7 +182,11 @@ $(document).ready(function() {
     
     setInput = function(text,value) {
         text = text.replace(/\_/g, "\'")
+        console.log(text)
+        $("#user-input").text(text);
         if (chat_history_flag){
+            text = ""
+            $("#user-input").text(text);
             chat_history_submitInput(value);
         }else{
             $("#user-input").text(text);
@@ -176,7 +198,6 @@ $(document).ready(function() {
 
     var increament_list = [];
     integrateResponse = function (result) {
-        console.log("result", result)
         var msg = [];
         var button_var = "";
         if(result.length == 0){
@@ -206,6 +227,7 @@ $(document).ready(function() {
             }
             if (result[i]["attachment"]){
                 query_flag = true;
+                console.log(result[i]["attachment"]["payload"]["src"])
                 msg.push( '<p class="botResult" ><iframe width="300" height="200" src="' + result[i]["attachment"]["payload"]["src"] + '&enablejsapi=1"  frameborder="0" style="border: solid 4px #37474F" ></iframe></p><div class="clearfix"></div></br>');
             }
             if (result[i]["text"] && i == result.length-1) {
@@ -214,10 +236,14 @@ $(document).ready(function() {
             }else if (result[i]["text"]){
                 msg.push('<p class="botResult">' + result[i].text + '</p></br>');
             }
-            // if (result[i]["text"] == "Calendar") {
-            //     query_flag = true;
-            //     msg.push('<p class="botResult"><iframe src="https://fullcalendar.io/demos" name="iframe_a" height="300px" width="100%" title="Iframe Example"></iframe></p></br>');
-            // }
+            if (result[i]["text"] == "Calendar") {
+                query_flag = true;
+                // msg.push('<p class="botResult"><iframe src="https://fullcalendar.io/demos" name="iframe_a" height="300px" width="100%" title="Iframe Example"></iframe></p></br>');
+            }
+            if (result[i]["text"] == "OK, Thanks.") {
+                input_type=true;
+                query_flag = true;
+            }
             if(result[i]["buttons"]){
                 button_var = result[i]["buttons"];
                 var buttons = []
@@ -228,6 +254,7 @@ $(document).ready(function() {
                 }
             }
             if (result[i]["input_text"] && i == result.length-1) {
+                input_text = result[i]["input_text"]
                 query_flag = true;
                 msg.push('<div class="outgoing_msg"><div class="sent_msg"><p>' + result[i]["input_text"] + '</p></div></div>');
             }else if (result[i]["input_text"]){
@@ -235,7 +262,6 @@ $(document).ready(function() {
             }
             if (result[i]["next_response"] != "") {
                 next_response = result[i]["next_response"];
-                console.log("next_response",typeof next_response)
             }
             if (result[i]["response_text"] && i == result.length-1) {
                 reset_button =  true;
@@ -262,7 +288,9 @@ $(document).ready(function() {
     addTextResponse = function (textReplies, buttons, increament_list, setQuickResponse, zoomimage) {
         return new Promise(function(resolve, reject) {
             var k = 0 ;
+            var speed_var=1000;
             function chatspeed(){
+                // var speed_var=0;
                 if (chat_history_flag){
                     $("#wave").hide();
                     outputArea.append(`<div class="received_withd_msg user-message">${textReplies[k]}</div>`);
@@ -291,6 +319,7 @@ $(document).ready(function() {
                         $(".incoming_msg").scrollTop($(".incoming_msg").prop('scrollHeight'));
                         k++;
                         if (k < textReplies.length){
+                            speed_var = 2000;
                             chatspeed()
                         }
                         var len = increament_list.length;
@@ -302,10 +331,11 @@ $(document).ready(function() {
                         }
                         if(buttons && k==textReplies.length)	{
                             setQuickResponse(buttons);  
-                        }else if (k==textReplies.length){
+                        }else if (k==textReplies.length && input_type==false){
                             $("#input-user").show();
                         }
-                    }, 1000);
+                        console.log(1*speed_var)
+                    }, 1*speed_var);
                 }
                 // $(".incoming_msg").scrollTop($("#chat-output").prop('scrollHeight'));
                 $("#wave").show();
@@ -364,7 +394,10 @@ $(document).ready(function() {
                     check_payload = payload1
                     check_list_buttons += '<label for="'+ quickReplies[i].title +'"> <input type="checkbox" name="color" value="'+ quickReplies[i].title +'" id="'+ quickReplies[i].title +'">'+ quickReplies[i].title +'</label></br>';
                 }
-                else {
+                else if (quickReplies[i].title == "I'm done for today!" && input_text == "I'm done for today!" && input_text == "I'm done for today!"){
+                    continue;
+                } 
+                else{
                     title1 = quickReplies[i].title;
                     payload1 = quickReplies[i].payload;
                     title2 = title1.replace(/\'/g, "_")

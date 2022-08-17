@@ -17,12 +17,13 @@ import uuid
 JWT_PAYLOAD_HANDLER = api_settings.JWT_PAYLOAD_HANDLER
 JWT_ENCODE_HANDLER = api_settings.JWT_ENCODE_HANDLER
 
+
 def chatBot_lightmode(request):
     if request.method == 'GET':
         # import pdb;pdb.set_trace()
         status_code = status.HTTP_200_OK
         uId= request.GET.get('uId')
-        category = request.GET.get('cat_id')
+        cat_id = request.GET.get('cat_id')
         level = request.GET.get('level')
         issue = request.GET.get('issue')
         url = "https://iwill.epsyclinic.com/index.php/Psybot/get_user_details"
@@ -39,7 +40,7 @@ def chatBot_lightmode(request):
         gender= res['Data']['gender']['label']
         age= res['Data']['age']['id']
         country= res['Data']['country']
-        cat_id = res['Data']['issue_id']
+        category_id = res['Data']['issue_id']
         state= res['Data']['state']
         city= res['Data']['city']
         language= res['Data']['language']
@@ -55,7 +56,7 @@ def chatBot_lightmode(request):
                     country=country,
                     state=state,
                     city=city,
-                    cat_id=cat_id,
+                    cat_id=category_id,
                     # level=level,
                     # issue=issue,
                     language=language,
@@ -64,16 +65,11 @@ def chatBot_lightmode(request):
                     )
             data.save()
             session_id = uuid.uuid1()
-            data_session = Bot_sessions(user_id=uId,
+            data = Bot_sessions(user_id=uId,
                         bot_session_id=session_id,
-                        category_id = cat_id
+                        category_id = category_id
                         )
-            data_session.save()
-            data_status = User_exercise_status(exercise_id="1",
-                        bot_session_id=session_id,
-                        completion_status = False
-                        )
-            data_status.save()
+            data.save()
             if data:
                 context = {
                     "user_id": uId,
@@ -82,30 +78,35 @@ def chatBot_lightmode(request):
         else:
             obj_session= Bot_sessions.objects.filter(user_id=uId).last()
             session_id= obj_session.bot_session_id
-            # data_status = User_exercise_status(exercise_id="1",
-            #             bot_session_id=session_id,
-            #             completion_status = False
-            #             )
-            # data_status.save()
             context = {
-                'user_id': uId,
-                'session_id': session_id
+
+            'user_id': uId,
+            'session_id': session_id
             }
 
-        # print(data)
+            
+        # data = User_exercise_status(exercise_id="1",
+        #             bot_session_id=session_id,
+        #             completion_status = False
+        #             )
+        # data.save()
         return render(request, "chatBot_lightmode.html", context)
+
+        
 
 class botAPI(APIView):
     permission_classes = (AllowAny,)
+
     def post(self, request):
         output_text = []
         user_id = request.data['user_id']
-        message = request.data['message']
+        input = request.data['message']
+        message = request.data['payload']
         restart = request.data['restart']
         sender = request.data['sender']
 
         user = UserModel.objects.filter(userId=user_id).exists()
-        if restart == True:
+        if restart :
             obj_session= Bot_sessions.objects.filter(user_id=user_id).last()
             category = obj_session.category_id
             session_id = uuid.uuid1()
@@ -119,7 +120,6 @@ class botAPI(APIView):
             session_id= obj_session.bot_session_id  
 
         session = Bot_sessions.objects.filter(bot_session_id=session_id).get()
-
         category = session.category_id
         uId = session.user_id
         if category in [1,3,4,7]:
@@ -132,41 +132,81 @@ class botAPI(APIView):
         elif bot == "Anxiety":
             url = "http://localhost:5006/webhooks/rest/webhook"    
         payload = json.dumps({
-        "sender": sender,
+        "sender": str(session_id),
         "message": message
         })
-
         headers = {
         'Content-Type': 'application/json'
         }
-        # response.json()[0]["buttons"] = ""
-        response = requests.request("POST", url, headers=headers, data=payload)
 
-        if "buttons" in response.json()[-1]:
-            next_response = response.json()[-1]["buttons"]
-        else:
-            next_response = ""
+        response = requests.request("POST", url, headers=headers, data=payload)
         for i in range(len(response.json())):
-            output_text.append(response.json()[i]["text"])
-        # print("response__________",output_text)
+            try:
+                if response.json()[i]["text"]:
+                    output_text.append(response.json()[i]["text"])
+            except:
+                pass
+        try:
+            if "buttons" in response.json()[0]:
+                next_response = response.json()[0]["buttons"]
+            elif "buttons" in response.json()[i]:
+                next_response = response.json()[i]["buttons"]
+            else :    
+                next_response = ""
+        except:
+            next_response = ""
+
         data = Bot_conversation(user_id=uId,
                     bot_session_id=session_id,
                     category_id = category,
-                    input_text= message ,
+                    input_text= input ,
                     response_text = output_text,
                     next_response = next_response
                     )
         data.save()
-        # print(data)
-        
-        if output_text in ["Bye!"]:
-            data = User_exercise_status(exercise_id="1",
-                    bot_session_id=session_id,
-                    completion_status = True
-                    )
-            data.save()
-        # print(data)
+
+        # if category in [1,3,4,7]:
+        for next_response in next_response:
+            if next_response["payload"] in ["/session0"]:
+                data = User_exercise_status(exercise_id=category,
+                        bot_session_id=session_id,
+                        completion_status = True,
+                        week_count = 1
+                        )
+                data.save()
+            if next_response["payload"] in ["/session1"]:
+                data = User_exercise_status(exercise_id=category,
+                        bot_session_id=session_id,
+                        completion_status = True,
+                        week_count = 2
+                        )
+                data.save()  
+            if next_response["payload"] in ["/session2"]:
+                data = User_exercise_status(exercise_id=category,
+                        bot_session_id=session_id,
+                        completion_status = True,
+                        week_count = 3
+                        )
+                data.save()  
+    #         print(next_response["payload"],"")
+    #         if next_response["payload"] in ["/session"]:
+    #             data = User_exercise_status(exercise_id=category,
+    #                     bot_session_id=session_id,
+    #                     completion_status = True,
+    #                     week_count = 0
+    #                     )
+    #             data.save()
+    # # else:
+    #     # for next_response in next_response:
+    #         if next_response["payload"] in ["/session0"]:
+    #             data = User_exercise_status(exercise_id=category,
+    #                     bot_session_id=session_id,
+    #                     completion_status = True,
+    #                     week_count = 1
+    #                     )
+    #             data.save()  
         return Response(response.json())
+
 
 class chathistory(APIView):
     permission_classes = (AllowAny,)
@@ -175,21 +215,24 @@ class chathistory(APIView):
 
         session_id = request.data['session_id']
         user_id = request.data['user_id']
-        all_messages=list(Bot_conversation.objects.filter(bot_session_id=session_id,user_id=user_id).values('input_text','response_text','next_response').order_by('id')) 
-        print(all_messages)   
+
+        # chat = Bot_conversation.objects.filter(bot_session_id=session_id).values()
+
+        all_messages=list(Bot_conversation.objects.filter(bot_session_id=session_id,user_id=user_id).values('input_text','response_text','next_response').order_by('id'))    
         return JsonResponse(all_messages,safe=False)
+
 
 class check_status(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
 
-        session_id = request.data['session_id']
+        session_id1 = request.data['session_id']
         user_id = request.data['user_id']
-        status = User_exercise_status.objects.filter(bot_session_id=session_id,exercise_id="1")
-        all_status=User_exercise_status.objects.filter(bot_session_id=session_id,exercise_id="1").values('completion_status')
-        if all_status:
-            all_status = list(all_status)[-1]
-        else:
-            all_status = {'completion_status': 0}
-        return JsonResponse(all_status,safe=False)       
+        session_id=list(Bot_conversation.objects.filter(user_id=user_id).values('bot_session_id').order_by('id'))[-1]["bot_session_id"]  
+        print(session_id,session_id1)
+        status = User_exercise_status.objects.filter(bot_session_id=session_id).values('exercise_id','week_count','completion_status')
+    
+        all_status=list(User_exercise_status.objects.filter(bot_session_id=session_id).values('exercise_id','week_count','completion_status').order_by('week_count'))    
+        return JsonResponse(all_status,safe=False)
+        

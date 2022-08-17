@@ -7,6 +7,9 @@ body {
   background-color: #FFFFFF;
   /* overflow: hidden; */
 }
+#status{
+  color: rgb(7, 86, 0);
+}
 .chatUi{
   /* height: 858px; */
   padding: 58px 28px 71px 28px;
@@ -448,7 +451,7 @@ div.edit {
   padding-bottom: 36px;
 }
 .received_msg {
-  /* margin-top: 54px; */
+  margin-top: 54px;
   display: inline-block;
   padding: 22px 10px 0px 10px;
   vertical-align: top;
@@ -626,6 +629,16 @@ div#wave {
   padding: 22px;
   background-color: transparent;
   border-color: transparent;
+}
+.top_header{
+  background-color: #FFFFFF; 
+  position: fixed;
+  width: 100%;
+  height: 60px;
+  padding: 7px;
+  border-bottom-width: 1px;
+  border-bottom-color: #0b0b0b;
+  border-bottom-style: solid;
 }
 .modal-content{
   width: 80%;
